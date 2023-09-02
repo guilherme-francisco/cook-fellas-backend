@@ -27,7 +27,11 @@ export class AuthService {
       });
       delete user.hash;
       // send the token
-      return this.signToken(user.id, user.email);
+      const token: string = await this.signToken(user.id, user.email);
+      return {
+        access_token: token,
+        user: user,
+      };
     } catch (error) {
       throw error;
     }
@@ -53,13 +57,15 @@ export class AuthService {
       throw new ForbiddenException('Credentials incorrect');
     }
     // send the token
-    return this.signToken(user.id, user.email);
+    delete user.hash;
+    const token: string = await this.signToken(user.id, user.email);
+    return {
+      access_token: token,
+      user: user,
+    };
   }
 
-  async signToken(
-    userId: number,
-    email: string,
-  ): Promise<{ access_token: string }> {
+  async signToken(userId: number, email: string): Promise<string> {
     const payload = {
       sub: userId,
       email,
@@ -72,6 +78,6 @@ export class AuthService {
       secret,
     });
 
-    return { access_token: token };
+    return token;
   }
 }
