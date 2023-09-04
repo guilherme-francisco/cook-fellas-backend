@@ -14,7 +14,7 @@ export class EmailService {
     let makeup = HTML_SIGN_UP_PAGE;
     makeup = makeup.replace(
       'images/',
-      `${this.configService.get<string>('BASE_URL')}/static/`,
+      `${this.configService.get<string>('EXTERNAL_URL')}/static/`,
     );
     return await this.emailService
       .sendMail({
