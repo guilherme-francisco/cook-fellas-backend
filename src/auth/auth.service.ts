@@ -1,9 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpCode, Injectable } from '@nestjs/common';
 import { SignupDto, LoginDto } from './dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
+import { EmailService } from 'src/email/email.service';
+import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +13,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
+    private emailService: EmailService,
   ) {}
 
   async signup(dto: SignupDto) {
@@ -28,10 +31,17 @@ export class AuthService {
       delete user.hash;
       // send the token
       const token: string = await this.signToken(user.id, user.email);
-      return {
-        access_token: token,
-        user: user,
-      };
+
+      // send email
+      const httpStatus = await this.emailService.sendSignUpEmailMessage(user);
+      if (httpStatus == HttpStatus.OK) {
+        return {
+          access_token: token,
+          user: user,
+        };
+      } else {
+        throw 'Make sure to write an appropriate email address';
+      }
     } catch (error) {
       throw error;
     }
