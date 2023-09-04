@@ -15,6 +15,7 @@
     "db:test:up": "docker compose up test-db -d",
     "db:test:restart": "npm run db:test:rm && npm run db:test:up && sleep 1 && npm run prisma:test:deploy",
     "prisma:prod:deploy": "dotenv -e .env.prod -- prisma migrate deploy",
+    "prisma:prod:studio": "dotenv -e .env.prod -- prisma studio",
     "db:prod:restart": "npm run db:test:rm && npm run db:test:up && sleep 1 && npm run prisma:prod:deploy",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

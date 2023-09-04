@@ -13,7 +13,7 @@ export class EmailService {
   async sendSignUpEmailMessage(user: User): Promise<HttpStatus> {
     let makeup = HTML_SIGN_UP_PAGE;
     makeup = makeup.replace(
-      'images/',
+      /images\//g,
       `${this.configService.get<string>('EXTERNAL_URL')}/static/`,
     );
     return await this.emailService
